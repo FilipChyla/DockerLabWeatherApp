@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Sprawdź pogodę</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 2em; }
+        form { margin-bottom: 2em; }
+        label, select, button { margin: 0.5em 0; display: block; }
+        .weather { border: 1px solid #ccc; padding: 1em; border-radius: 8px; width: 300px; }
+    </style>
+</head>
+<body>
+    <h1>Show current weather</h1>
+
+    <form method="post">
+        <label for="country">Country:</label>
+        <select name="country" id="country" onchange="updateCities()">
+            {% for country in locations %}
+                <option value="{{ country }}"
+                    {% if country == selected_country %} selected {% endif %}>
+                    {{ country }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label for="city">City:</label>
+        <select name="city" id="city">
+            {% for city in locations[selected_country].keys() %}
+                <option value="{{ city }}"
+                    {% if city == selected_city %} selected {% endif %}>
+                    {{ city }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Show weather</button>
+    </form>
+
+    {% if weather %}
+        <div class="weather">
+            {% if weather.error %}
+                <p style="color: red;">{{ weather.error }}</p>
+            {% else %}
+                <h2>{{ selected_city }}</h2>
+                <p><strong>Temperature:</strong> {{ weather.main.temp }}°C</p>
+                <p><strong>Description:</strong> {{ weather.weather[0].description }}</p>
+                <p><strong>Humidity:</strong> {{ weather.main.humidity }}%</p>
+                <p><strong>Wind speed:</strong> {{ weather.wind.speed }} m/s</p>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <script>
+        const locations = {{ locations | tojson | safe }};
+        const citySelect = document.getElementById("city");
+        const countrySelect = document.getElementById("country");
+
+        function updateCities() {
+            const selectedCountry = countrySelect.value;
+            const cities = locations[selectedCountry];
+            citySelect.innerHTML = "";
+
+            for (const city in cities) {
+                const option = document.createElement("option");
+                option.value = city;
+                option.textContent = city;
+                citySelect.appendChild(option);
+            }
+        }
+    </script>
+</body>
+</html>
