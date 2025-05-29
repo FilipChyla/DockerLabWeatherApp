@@ -50,12 +50,12 @@ jobs:
           outputs: type=docker
           cache-from: type=registry,ref=${{ env.CACHE_REPO }}:buildcache
           cache-to: type=registry,ref=${{ env.CACHE_REPO }}:buildcache,mode=max
-          tags: ${{ env.IMAGE_NAME }}:latest
+          tags: ${{ env.CACHE_REPO }}:latest
 
       - name: Scan image for vulnerabilities
         uses: aquasecurity/trivy-action@0.18.0
         with:
-          image-ref: ${{ env.IMAGE_NAME }}:latest
+          image-ref: ${{ env.CACHE_REPO }}:latest
           format: table
           exit-code: 1
           severity: CRITICAL,HIGH
