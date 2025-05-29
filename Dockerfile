@@ -1,17 +1,19 @@
-FROM python:3.10-alpine AS build
+FROM python:3.10.17-alpine AS build
 
 RUN apk add --no-cache gcc musl-dev libffi-dev
 WORKDIR /app
 COPY requirements.txt .
-RUN pip install --user --no-cache-dir -r requirements.txt
+
+RUN pip install --upgrade setuptools && \
+    pip install --no-cache-dir -r requirements.txt
 
 
-FROM python:3.10-alpine AS final
+FROM python:3.10.17-alpine AS final
 LABEL org.opencontainers.image.authors="Filip Chyla"
 
 WORKDIR /app
-RUN apk add --no-cache libffi
-COPY --from=build /root/.local /root/.local
+RUN apk add --no-cache libffi expat
+COPY --from=build /usr/local /usr/local
 COPY . .
 
 EXPOSE 5000
