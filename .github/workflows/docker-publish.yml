@@ -60,12 +60,12 @@ jobs:
           outputs: type=image
           cache-from: type=registry,ref=${{ env.CACHE_REPO }}
           cache-to: type=registry,ref=${{ env.CACHE_REPO }},mode=max
-          tags: ${{ env.IMAGE_NAME }}:latest
+          tags: ${{ github.event.repository.name }}:latest
 
       - name: Scan image for vulnerabilities
         uses: aquasecurity/trivy-action@0.18.0
         with:
-          image-ref: ${{ github.event.repository.name }}:latest
+          image-ref: ${{ env.CACHE_REPO }}:latest
           format: table
           exit-code: 1
           severity: CRITICAL,HIGH
