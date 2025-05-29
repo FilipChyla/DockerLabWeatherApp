@@ -60,7 +60,7 @@ jobs:
           outputs: type=image
           cache-from: type=registry,ref=${{ env.CACHE_REPO }}
           cache-to: type=registry,ref=${{ env.CACHE_REPO }},mode=max
-          tags: ${{ env.CACHE_REPO }}
+          tags: ${{ env.IMAGE_NAME }}:latest
 
       - name: Scan image for vulnerabilities
         uses: aquasecurity/trivy-action@0.18.0
