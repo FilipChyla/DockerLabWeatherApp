@@ -20,6 +20,16 @@ jobs:
     steps:
       - name: Check out the source_repo
         uses: actions/checkout@v4
+        
+      - name: Docker metadata definitions
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          flavor: latest=false
+          tags: |
+            type=sha,priority=100,prefix=sha-,format=short
+            type=semver,priority=200,pattern={{version}}
 
       - name: QEMU set-up
         uses: docker/setup-qemu-action@v3
