@@ -65,7 +65,7 @@ jobs:
       - name: Scan image for vulnerabilities
         uses: aquasecurity/trivy-action@0.18.0
         with:
-          image-ref: ${{ env.CACHE_REPO }}:latest
+          image-ref: ${{ github.event.repository.name }}:latest
           format: table
           exit-code: 1
           severity: CRITICAL,HIGH
