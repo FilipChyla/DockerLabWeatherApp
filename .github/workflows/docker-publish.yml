@@ -6,8 +6,8 @@ on:
     branches: [main]
 
 env:
-  IMAGE_NAME: ghcr.io/${{ vars.GHCR_USERNAME }}/${{ github.event.repository.name }}
-  CACHE_REPO: docker.io/${{ vars.DOCKERHUB_USERNAME }}/build-cache
+  IMAGE_NAME: ghcr.io/${{ toLower(vars.GHCR_USERNAME) }}/${{ github.event.repository.name }}
+  CACHE_REPO: docker.io/${{ toLower(vars.DOCKERHUB_USERNAME) }}/build-cache
 
 jobs:
   build:
@@ -18,7 +18,7 @@ jobs:
       packages: write
 
     steps:
-      - name: Check out the source_repo
+      - name: Check out the source repo
         uses: actions/checkout@v4
 
       - name: QEMU set-up
@@ -48,14 +48,14 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: false
           outputs: type=image
-          cache-from: type=registry,ref=${{ env.CACHE_REPO }}
-          cache-to: type=registry,ref=${{ env.CACHE_REPO }},mode=max
-          tags: ${{ env.CACHE_REPO }}
+          cache-from: type=registry,ref=${{ env.CACHE_REPO }}:buildcache
+          cache-to: type=registry,ref=${{ env.CACHE_REPO }}:buildcache,mode=max
+          tags: ${{ env.IMAGE_NAME }}:latest
 
       - name: Scan image for vulnerabilities
         uses: aquasecurity/trivy-action@0.18.0
         with:
-          image-ref: ${{ env.CACHE_REPO }}:latest
+          image-ref: ${{ env.IMAGE_NAME }}:latest
           format: table
           exit-code: 1
           severity: CRITICAL,HIGH
